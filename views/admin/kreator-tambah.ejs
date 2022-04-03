@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Box Bawah -->
+            <div class="box has-background-grey-lighter m-0">
+              <form id="tambah" action="/admin/kreator-tambah" method="POST">
+                <div class="box">
+                  <div class="columns is-mobile is-centered">
+                    <div class="column">
+                      <% form.forEach(el=> { %>
+                      <div class="field">
+                        <label class="label is-capitalized">
+                          <%= el.text %>
+                        </label>
+                        <div class="control">
+                          <input
+                            class="input"
+                            name="<%= el.text %>"
+                            type="<%= el.tipe %>"
+                            placeholder="Text input"
+                          />
+                        </div>
+                      </div>
+                      <% }) %>
+                      <div class="field">
+                        <div class="control">
+                          <button
+                            type="submit"
+                            class="button is-fullwidth is-success"
+                          >
+                            <i class="material-icons-round mr-2">
+                              add_circle_outline
+                            </i>
+                            <span class="is-capitalized">Simpan</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <!-- END Box Bawah -->
+
+            <!-- Back -->
+            <%- include('../partials/back.ejs') %>
+            <!-- END Back -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+ 
+  <%- include('../partials/script.ejs') %>
+  <script>
+    let tambah = document.querySelector("#tambah");
+    tambah.addEventListener("submit", submitForm);
+
+    async function submitForm(e) {
+      e.preventDefault();
+      let formData = {};
+      for (let i = 0; i < this.elements.length; i++) {
+        if (this.elements[i].tagName === "BUTTON") continue;
+        formData[this.elements[i].name] = this.elements[i].value;
+      }
+
+      let result = await fetch(this.action, {
+        method: this.method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      }).then((res) => res.json());
+
+      if (result.status === "ok") {
+        alert(result.message);
+        window.location.assign("/admin/kreator-list");
+      } else {
+        alert(result.message);
+      }
+    }
+  </script>
+   </body>
+</html>

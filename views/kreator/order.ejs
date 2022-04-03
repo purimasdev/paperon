@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Info Kuesioner -->
+            <div class="box has-background-grey-lighter mb-2 p-2">
+              <p class="title is-5">Info Kuesioner</p>
+              <% if (typeof form !== 'undefined' ) { %>
+              <div class="box p-2">
+                <p class="title is-5"><%= form.judul %></p>
+                <p class="subtitle is-6 mb-2"><%= form.deskripsi %></p>
+                <p class="help"><%= form.createdAt %></p>
+              </div>
+              <% } else { %>
+              <p class="subtitle is-4">- Tidak ada data kuesioner -</p>
+              <% } %>
+            </div>
+            <!-- END Info Kuesioner -->
+
+            <!-- Order Pertanyaan -->
+            <div class="box has-background-grey-lighter mt-2">
+              <p class="title is-5">List Pertanyaan</p>
+              <% if (typeof form !== "undefined") { %>
+              <form
+                id="form"
+                action="/kreator/order/?id=<%= form._id %>"
+                method="POST"
+              >
+                <% form.pertanyaan.forEach(el=> { %>
+                <input type="hidden" name="qId" value="<%= el._id %>" />
+                <div class="box my-2">
+                  <div class="columns">
+                    <div class="column">
+                      <div class="columns is-mobile">
+                        <div class="column px-0 pb-0">
+                          <div class="select">
+                            <select name="prioritas" required>
+                              <option disabled hidden selected value>
+                                - Priotitas -
+                              </option>
+                              <% for( let i=1; i <=9; i++ ) { %>
+                              <option value="<%= i %>"><%= i %></option>
+                              <% } %>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="column px-0 pb-0">
+                          <div class="select">
+                            <select name="indeks" required>
+                              <option disabled hidden selected value>
+                                - Indeks -
+                              </option>
+                              <% for( let i=1; i <=9; i++ ) { %>
+                              <option value="<%= i %>"><%= i %></option>
+                              <% } %>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column">
+                      <div class="level">
+                        <div class="level-item m-0">
+                          <p class="title is-6"><%= el.teks %></p>
+                        </div>
+                        <div class="level-item">
+                          <p class="subtitle is-6"><%= ubahTipe(el.tipe) %></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+                <!-- Tombol -->
+                <div class="level-item">
+                  <button class="button is-fullwidth is-success">
+                    <i class="material-icons-round mr-2">
+                      add_circle_outline
+                    </i>
+                    <span class="is-capitalized">Simpan</span>
+                  </button>
+                </div>
+                <!-- ENDTombol -->
+              </form>
+              <% } else { %>
+              <p class="subtitle is-4">- Tidak ada data -</p>
+              <% } %>
+            </div>
+            <!-- END Order Pertanyaan -->
+
+            <!-- Back -->
+            <%- include('../partials/back.ejs') %>
+            <!-- END Back -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+    <script>
+      // let arrPertanyaan = document.getElementsByName("pertanyaan");
+
+      let form = document.querySelector("#form");
+      form.addEventListener("submit", submitForm);
+
+      async function submitForm(e) {
+        e.preventDefault();
+        let {
+          indeks: indeksList,
+          prioritas: prioritasList,
+          qId: qIds,
+        } = this.elements;
+
+        let formData = {};
+        for (let i = 0; i < qIds.length; i++) {
+          formData[qIds[i].value] = {
+            prioritas: prioritasList[i].value,
+            indeks: indeksList[i].value,
+          };
+        }
+
+        let result = await fetch(this.action, {
+          method: this.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }).then((res) => res.json());
+
+        if (result.status === "ok") {
+          alert(result.message);
+          window.location.assign(`/kreator/review?id=${result.data}`);
+        } else {
+          alert(result.message);
+        }
+      }
+    </script>
+  </body>
+</html>

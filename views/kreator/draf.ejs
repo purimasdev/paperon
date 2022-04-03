@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Info Kuesioner -->
+            <div class="box has-background-grey-lighter mb-2 p-2">
+              <p class="title is-5">Info Kuesioner</p>
+              <% if (typeof form !== 'undefined' ) { %>
+              <div class="box p-2">
+                <p class="title is-5"><%= form.judul %></p>
+                <p class="subtitle is-6 mb-2"><%= form.deskripsi %></p>
+                <p class="help"><%= form.createdAt %></p>
+              </div>
+              <% } else { %>
+              <p class="subtitle is-4">- Tidak ada data kuesioner -</p>
+              <% } %>
+            </div>
+            <!-- END Info Kuesioner -->
+
+            <!-- List Pertanyaan -->
+            <div class="box has-background-grey-lighter mb-2 p-2">
+              <p class="title is-5">List Pertanyaan</p>
+              <% if (questions.length > 0) { %>
+              <form
+                id="form"
+                action="/kreator/draf/?id=<%= form._id %>"
+                method="post"
+              >
+                <% questions.forEach(el => { %>
+                <div class="box mb-2">
+                  <div class="columns is-vcentered is-mobile">
+                    <div class="column p-0 is-1">
+                      <label class="checkbox">
+                        <input
+                          type="checkbox"
+                          name="pertanyaan"
+                          value="<%= el._id %>"
+                        />
+                      </label>
+                    </div>
+                    <div class="column m-0 p-2 is-11 has-text-left">
+                      <p class="title is-6"><%= el.tipe %></p>
+                      <p class="subtitle is-6"><%= potongStr(el.teks,35 ) %></p>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+                <button class="button is-fullwidth is-success">
+                  <i class="material-icons-round mr-2"> add_circle_outline </i>
+                  <span class="is-capitalized">Simpan</span>
+                </button>
+              </form>
+              <% } else { %>
+              <p class="subtitle is-4">- Tidak ada list pertanyaan -</p>
+              <% } %>
+            </div>
+            <!-- END List Pertanyaan -->
+
+            <!-- Back -->
+            <%- include('../partials/back.ejs') %>
+            <!-- END Back -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+    <script>
+      let arrPertanyaan = document.getElementsByName("pertanyaan");
+
+      let form = document.querySelector("#form");
+      form.addEventListener("submit", submitForm);
+
+      async function submitForm(e) {
+        e.preventDefault();
+        let formData = {};
+        formData.pertanyaan = [];
+
+        for (let i = 0; i < arrPertanyaan.length; i++) {
+          if (arrPertanyaan[i].checked) {
+            formData.pertanyaan.push(arrPertanyaan[i].value);
+          }
+        }
+
+        let result = await fetch(this.action, {
+          method: this.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }).then((res) => res.json());
+
+        if (result.status === "ok") {
+          alert(result.message);
+          window.location.assign(`/kreator/order?id=${result.data}`);
+        } else {
+          alert(result.message);
+        }
+      }
+    </script>
+  </body>
+</html>

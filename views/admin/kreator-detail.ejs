@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Box Detail -->
+            <div class="box has-background-grey-lighter m-0">
+              <div class="columns is-mobile is-centered">
+                <div class="column">
+                  <!-- Detail -->
+                  <figure class="image container is-64x64">
+                    <img src="<%= pml.avatar %>" alt="Image" />
+                  </figure>
+                  <% for( let i = 0; i < keys.length; i++ ) { %>
+                  <div class="field">
+                    <label class="label is-capitalized"><%= keys[i] %></label>
+                    <div class="control">
+                      <input
+                        class="input is-capitalized"
+                        type="text"
+                        value="<%= kreator[keys[i]] %>"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <% } %>
+                  <!-- END Detail -->
+                </div>
+              </div>
+
+              <!-- Tombol -->
+              <div class="field">
+                <div class="control">
+                  <button
+                    disabled
+                    href="#"
+                    class="button is-fullwidth is-danger is-light"
+                  >
+                    <i class="material-icons-round mr-2"> password </i>
+                    <span class="is-capitalized">ubah password</span>
+                  </button>
+                </div>
+              </div>
+              <!-- Delete -->
+              <form
+                id="hapus"
+                action="/admin/kreator-detail/?id=<%= kreator._id %>"
+              >
+                <input type="hidden" name="_method" value="DELETE" />
+                <div class="field">
+                  <div class="control">
+                    <button class="button is-fullwidth is-danger">
+                      <i class="material-icons-round mr-2"> delete </i>
+                      <span class="is-capitalized">Hapus</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+              <!-- END Delete -->
+
+              <!-- ENDTombol -->
+            </div>
+            <!-- END Box Detail -->
+
+            <!-- Back -->
+            <%- include('../partials/back.ejs') %>
+            <!-- END Back -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+
+    <%- include('../partials/script.ejs') %>
+    <script>
+      let hapus = document.querySelector("#hapus");
+      hapus.addEventListener("submit", submitForm);
+
+      async function submitForm(e) {
+        e.preventDefault();
+        let result = await fetch(this.action, {
+          method: "delete",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }).then((res) => res.json());
+
+        if (result.status === "ok") {
+          alert(result.message);
+          window.location.assign("/admin/kreator-list");
+        } else {
+          alert(result.message);
+        }
+      }
+    </script>
+  </body>
+</html>

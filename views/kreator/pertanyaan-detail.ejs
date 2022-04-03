@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Box Landing -->
+            <div class="box has-background-grey-lighter m-0 p-2">
+              <% for( let i = 0; i < keys.length; i++ ) { %>
+              <div class="box m-2">
+                <% if (keys[i] === 'opsi') { %>
+                <p class="title is-5"><%= keys[i] %></p>
+                <% for( let j = 0; j < question[keys[i]].length; j++ ) { %>
+                <p class="subtitle is-6 m-2">
+                  Opsi <%= j+1 %> : <%= question[keys[i]][j] %>
+                </p>
+                <% } %> <% } else { %>
+                <p class="title is-5"><%= keys[i] %></p>
+                <p class="subtitle is-6"><%= question[keys[i]] %></p>
+                <% } %>
+              </div>
+              <% } %>
+            </div>
+            <!-- END Box Landing -->
+
+            <!-- Back -->
+            <%- include('../partials/back.ejs') %>
+            <!-- END Back -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+  </body>
+</html>

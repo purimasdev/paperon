@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head.ejs') %>
+  </head>
+
+  <body>
+    <!-- Bigger Screen View -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Bigger Screen View -->
+
+    <!-- Mobile View -->
+    <section>
+      <div class="is-hidden-tablet">
+        <div
+          class="hero has-background-grey-light is-fullheight has-text-centered"
+        >
+          <div class="hero-body p-2">
+            <div class="container">
+              <!-- Brand -->
+              <%- include('../partials/brand.ejs') %>
+              <!-- END Brand -->
+              <!-- Login Box -->
+              <div id="loginBox" class="box has-background-grey-lighter">
+                <div class="columns is-mobile">
+                  <div class="column"><p class="title">Login</p></div>
+                  <% if (setting.enableRegister) { %>
+                  <div class="column is-narrow">
+                    <div class="button p-0" onclick="openRegister()">
+                      <i class="material-icons-round p-2">app_registration</i>
+                    </div>
+                  </div>
+                  <% } %>
+                </div>
+                <form id="loginForm" action="/auth/login" method="post">
+                  <div class="box">
+                    <div class="field">
+                      <p class="control has-icons-left has-icons-right">
+                        <input
+                          class="input"
+                          name="email"
+                          type="email"
+                          placeholder="Email"
+                          value="wiss@wiss.com"
+                        />
+                        <span class="icon is-small is-left">
+                          <i class="material-icons-round">alternate_email</i>
+                        </span>
+                      </p>
+                    </div>
+                    <div class="field">
+                      <p class="control has-icons-left">
+                        <input
+                          class="input"
+                          name="password"
+                          type="password"
+                          placeholder="Password"
+                          value="123456"
+                        />
+                        <span class="icon is-small is-left">
+                          <i class="material-icons-round">account_circle</i>
+                        </span>
+                      </p>
+                    </div>
+                    <div class="level is-mobile">
+                      <div class="level-left">
+                        <button type="reset" class="button px-2">
+                          <i class="material-icons-round mr-2">cached</i>
+                          <span class="is-capitalized">reset</span>
+                        </button>
+                      </div>
+                      <div class="level-right">
+                        <button type="submit" class="button px-2">
+                          <i class="material-icons-round mr-2">login</i>
+                          <span class="is-capitalized">submit</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <!-- END Login Box -->
+              <!-- Register Box -->
+              <% if (setting.enableRegister) { %>
+              <div
+                id="registerBox"
+                class="box has-background-grey-lighter is-hidden"
+              >
+                <div class="columns is-mobile">
+                  <div class="column"><p class="title">Register</p></div>
+                  <div class="column is-narrow">
+                    <div class="button p-0" onclick="openLogin()">
+                      <i class="material-icons-round p-2">login</i>
+                    </div>
+                  </div>
+                </div>
+                <form action="/auth/register" method="post" id="registerForm">
+                  <div class="box">
+                    <div class="field">
+                      <p class="control has-icons-left has-icons-right">
+                        <input
+                          id="name"
+                          class="input"
+                          name="nama"
+                          type="text"
+                          placeholder="Nama"
+                          value="dwisada"
+                        />
+                        <span class="icon is-small is-left">
+                          <i class="material-icons-round"> account_circle </i>
+                        </span>
+                      </p>
+                    </div>
+                    <div class="field">
+                      <p class="control has-icons-left has-icons-right">
+                        <input
+                          class="input"
+                          name="email"
+                          type="email"
+                          placeholder="Email"
+                          value="wiss@wiss.com"
+                        />
+                        <span class="icon is-small is-left">
+                          <i class="material-icons-round">alternate_email</i>
+                        </span>
+                      </p>
+                    </div>
+                    <div class="field">
+                      <p class="control has-icons-left">
+                        <input
+                          class="input"
+                          name="password"
+                          type="password"
+                          placeholder="Password"
+                          value="123456"
+                        />
+                        <span class="icon is-small is-left">
+                          <i class="material-icons-round">password</i>
+                        </span>
+                      </p>
+                    </div>
+                    <div class="level is-mobile">
+                      <div class="level-left">
+                        <button type="reset" class="button px-2">
+                          <i class="material-icons-round mr-2">adb</i>
+                          <span class="is-capitalized">reset</span>
+                        </button>
+                      </div>
+                      <div class="level-right">
+                        <button type="submit" class="button px-2">
+                          <i class="material-icons-round mr-2">login</i>
+                          <span class="is-capitalized">submit</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <% } %>
+              <!-- END Register Box -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END Mobile View -->
+    <script>
+      function openRegister() {
+        let registerBox = document.querySelector("#registerBox");
+        let loginBox = document.querySelector("#loginBox");
+        registerBox.classList.remove("is-hidden");
+        loginBox.classList.add("is-hidden");
+      }
+
+      function openLogin() {
+        let registerBox = document.querySelector("#registerBox");
+        let loginBox = document.querySelector("#loginBox");
+        registerBox.classList.add("is-hidden");
+        loginBox.classList.remove("is-hidden");
+      }
+
+      const loginForm = document.querySelector("#loginForm");
+      loginForm.addEventListener("submit", submitForm);
+      const registerForm = document.querySelector("#registerForm");
+      registerForm.addEventListener("submit", submitForm);
+
+      async function submitForm(e) {
+        e.preventDefault();
+        //  remove button from data
+        let formData = {};
+        for (let i = 0; i < this.elements.length; i++) {
+          if (this.elements[i].tagName === "BUTTON") continue;
+          formData[this.elements[i].name] = this.elements[i].value;
+        }
+
+        let result = await fetch(this.action, {
+          method: this.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }).then((res) => res.json());
+
+        if (result.status === "ok") {
+          alert(result.message);
+          window.location.assign("/admin");
+          // window.location.assign("/kreator");
+        } else {
+          // errorText.textContent = result.message;
+          alert(result.message);
+        }
+      }
+    </script>
+  </body>
+</html>

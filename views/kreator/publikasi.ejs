@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Box Landing -->
+            <div class="box has-background-grey-lighter">
+              <p class="title is-capitalized">mulai menjawab</p>
+              <a href="/responden/cari" class="button is-fullwidth">
+                <i class="material-icons-round mr-2"> search </i>
+                <span class="is-capitalized">cari kuesioner</span>
+              </a>
+            </div>
+            <!-- END Box Landing -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+  </body>
+</html>

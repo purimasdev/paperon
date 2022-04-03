@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+            <!-- List Pertanyaan -->
+            <div class="box has-background-grey-lighter m-0 p-2">
+              <% if (questions.length > 0) { %> <% questions.forEach(el => { %>
+              <a
+                href="/kreator/pertanyaan-detail/?id=<%= el._id %>"
+                class="box p-2 mb-2"
+              >
+                <div class="level">
+                  <div class="level-item m-0">
+                    <p class="title is-6"><%= potongStr(el.teks,28 ) %></p>
+                  </div>
+                  <div class="level-item">
+                    <p class="help"><%= ubahTipe(el.tipe) %></p>
+                  </div>
+                </div>
+              </a>
+              <% }) %> <% } else { %>
+              <p class="title is-5 mb-2">- Belum ada pertanyaan -</p>
+              <p class="help">
+                Buat pertanyaan <a href="/kreator/pertanyaan-tambah">disini</a>
+              </p>
+              <% } %>
+            </div>
+            <!-- END List Pertanyaan -->
+
+            <!-- Back -->
+            <%- include('../partials/back.ejs') %>
+            <!-- END Back -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+  </body>
+</html>

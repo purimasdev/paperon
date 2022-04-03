@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Box Bawah -->
+            <div class="box has-background-grey-lighter m-0">
+              <div class="level">
+                <!-- Form -->
+                <form
+                  id="form"
+                  action="/kreator/pertanyaan-tambah"
+                  method="POST"
+                  onsubmit="enableInput()"
+                >
+                  <input type="hidden" name="userId" value="<%= user._id %>" />
+                  <!-- Tipe Pertanyaan -->
+                  <div class="field">
+                    <label class="label">Pilih Tipe Pertanyaan</label>
+                    <div class="control">
+                      <div class="select is-fullwidth">
+                        <select name="tipe" id="tipe">
+                          <option value="" hidden>- Pilihan -</option>
+                          <option value="short_text">Teks Singkat</option>
+                          <option value="long_text">Teks Panjang</option>
+                          <option value="number">Angka</option>
+                          <option value="date">Tanggal</option>
+                          <option value="checkbox">Kotak Centang</option>
+                          <option value="radio">Pilihan Ganda</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- END Tipe Pertanyaan -->
+                  <!-- Teks Pertanyaan -->
+                  <label class="label">Input Teks Pertanyaan</label>
+                  <div class="field has-addons">
+                    <div class="control is-expanded">
+                      <input
+                        disabled
+                        class="input"
+                        name="teks"
+                        type="text"
+                        placeholder="Text input"
+                        id="teks"
+                      />
+                    </div>
+                    <div class="control">
+                      <button
+                        type="button"
+                        disabled
+                        id="teks_btn"
+                        class="button is-info"
+                      >
+                        Set
+                      </button>
+                    </div>
+                  </div>
+                  <!-- END Teks Pertanyaan -->
+                  <!-- Pembuat Opsi -->
+                  <div id="opsi" class="box is-hidden">
+                    <div class="field">
+                      <label class="label">Jumlah opsi yang digunakan</label>
+                      <div class="control">
+                        <div class="select is-primary">
+                          <select id="jumlah_opsi" name="jmlOpsi">
+                            <option value="" disabled selected>
+                              - Jumlah -
+                            </option>
+                            <% for( let i=1; i <=5; i++ ) { %>
+                            <option value="<%= i %>"><%= i %></option>
+                            <% } %>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Opsi Input -->
+                    <div id="opsi_setup" class="field"></div>
+                    <!-- Set Opsi Button -->
+                    <div class="field">
+                      <div class="control">
+                        <button
+                          type="button"
+                          disabled
+                          id="opsi_btn"
+                          class="button is-info"
+                        >
+                          Set
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- END Pembuat Opsi -->
+                  <!-- Tombol -->
+                  <div class="level-item">
+                    <button
+                      class="button is-fullwidth is-success"
+                      id="simpan_btn"
+                      disabled
+                    >
+                      <i class="material-icons-round mr-2">
+                        add_circle_outline
+                      </i>
+                      <span class="is-capitalized">Simpan</span>
+                    </button>
+                  </div>
+                  <!-- ENDTombol -->
+                </form>
+
+                <!-- END Form -->
+              </div>
+            </div>
+            <!-- END Box Bawah -->
+
+            <!-- Back -->
+            <%- include('../partials/back.ejs') %>
+            <!-- END Back -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+  
+  <%- include('../partials/script.ejs') %>
+  <script>
+    // Init LocalStorage
+    let ls = window.localStorage;
+    ls.removeItem("state");
+    ls.setItem("state", JSON.stringify({}));
+
+    // DOM
+    let tipe = document.getElementById("tipe");
+    let teks = document.getElementById("teks");
+    let teks_btn = document.getElementById("teks_btn");
+    let opsi = document.getElementById("opsi");
+    let jumlah_opsi = document.getElementById("jumlah_opsi");
+    let opsi_setup = document.getElementById("opsi_setup");
+    let options = document.getElementsByName("opsi");
+    let option_btn = document.getElementById("opsi_btn");
+    let send_btn = document.getElementById("simpan_btn");
+    let form = document.querySelector("#form");
+
+    // Tipe
+    tipe.onchange = function () {
+      let state = JSON.parse(ls.getItem("state"));
+      state["tipe"] = this.value;
+      // If type checkbox || radio, add option
+      switch (this.value) {
+        case "checkbox":
+        case "radio":
+          state["countOption"] = 0;
+          break;
+        default:
+          break;
+      }
+      ls.setItem("state", JSON.stringify(state));
+      tipe.disabled = true;
+      teks.disabled = false;
+    };
+
+    // Teks Input
+    teks.onkeyup = function () {
+      let value = teks.value;
+      if (value != "") {
+        teks_btn.disabled = false;
+      } else teks_btn.disabled = true;
+    };
+    // Teks Set Button
+    teks_btn.onclick = function () {
+      let state = JSON.parse(ls.getItem("state"));
+      ls.setItem("state", JSON.stringify(state));
+      teks.setAttribute("disabled", "");
+      teks_btn.setAttribute("disabled", "");
+      // If ls has countOption, show Option box, else enable send button
+      if (state.hasOwnProperty("countOption")) {
+        opsi.classList.remove("is-hidden");
+      } else {
+        simpan_btn.disabled = false;
+      }
+    };
+
+    // Template to create Input Option
+    function buatOpsi(count) {
+      for (let i = 1; i <= count; i++) {
+        let html = `
+          <div class="field">
+            <div class="control">
+              <input class="input" type="text" name="opsi" placeholder="Opsi ${i}" id="opsi">
+            </div>
+          </div>
+        `;
+        opsi_setup.insertAdjacentHTML("beforeend", html);
+      }
+    }
+    // Number of options select
+    jumlah_opsi.onchange = function () {
+      let state = JSON.parse(ls.getItem("state"));
+      state["countOption"] = parseInt(this.value);
+      ls.setItem("state", JSON.stringify(state));
+      buatOpsi(state.countOption);
+      jumlah_opsi.setAttribute("disabled", "");
+      opsi_btn.disabled = false;
+    };
+
+    // Cek opsi kosong
+    function checkOpsi(arr) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].value === "") {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // Option Set Button
+    opsi_btn.onclick = function () {
+      // console.log(checkOpsi(options))
+      if (!checkOpsi(options)) {
+        return alert("Masih ada opsi yang kosong");
+      } else {
+        options.forEach((option) => {
+          option.disabled = true;
+        });
+        opsi_btn.disabled = true;
+        simpan_btn.disabled = false;
+      }
+    };
+
+    // Enable all input before submit
+    let enableInput = () => {
+      tipe.disabled = false;
+      teks.disabled = false;
+      options.forEach((opsi) => (opsi.disabled = false));
+    };
+
+    form.addEventListener("submit", submitForm);
+
+    async function submitForm(e) {
+      e.preventDefault();
+      let formData = {};
+      for (let i = 0; i < this.elements.length; i++) {
+        if (this.elements[i].tagName === "BUTTON") continue;
+        formData[this.elements[i].name] = this.elements[i].value;
+      }
+
+      formData.opsi = [];
+      for (let i = 0; i < options.length; i++) {
+        formData.opsi.push(options[i].value);
+      }
+
+      // save options as OBJECT
+      // let opsi_val = {};
+      // for (let i = 0; i < options.length; i++) {
+      //   opsi_val[`opsi${i}`] = options[i].value;
+      // }
+
+      let result = await fetch(this.action, {
+        method: this.method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }).then((res) => res.json());
+
+      if (result.status === "ok") {
+        alert(result.message);
+        window.location.reload();
+      } else {
+        alert(result.message);
+      }
+    }
+  </script>
+  </body>
+</html>

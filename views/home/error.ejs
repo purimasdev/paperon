@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head.ejs') %>
+  </head>
+
+  <body>
+    <!-- Bigger Screen View -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Bigger Screen View -->
+
+    <!-- Mobile View -->
+    <section>
+      <div class="is-hidden-tablet">
+        <div
+          class="hero has-background-grey-light is-fullheight has-text-centered"
+        >
+          <div class="hero-body p-2">
+            <div class="container">
+              <!-- Brand -->
+              <%- include('../partials/brand.ejs') %>
+              <!-- END Brand -->
+              <!-- Some Text -->
+              <div
+                class="box px-2 has-background-grey-lighter has-text-centered"
+              >
+                <p class="subtitle is-6">
+                  Halaman akan dialihkan dalam
+                  <strong id="countDown" class="subtitle is-6"></strong> detik
+                </p>
+                <p class="help">
+                  klik <a href="/">disini</a> bila belum dialihkan
+                </p>
+              </div>
+              <!--  END Some Text -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END Mobile View -->
+    <script>
+      let count = 5;
+      document.getElementById("countDown").innerHTML = count;
+      setInterval(function () {
+        count--;
+        document.getElementById("countDown").innerHTML = count;
+        if (count == 0) {
+          location.assign("/");
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>

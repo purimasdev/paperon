@@ -1,0 +1,36 @@
+{
+  "name": "Paperon : Simple App",
+  "short_name": "Paperon",
+  "id": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#424874",
+  "theme_color": "#575f99",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo/192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo/512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable-logo/maskable_icon_x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/maskable-logo/maskable_icon_x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ]
+}

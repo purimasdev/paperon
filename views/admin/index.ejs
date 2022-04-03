@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Box Menu -->
+            <div class="box has-background-grey-lighter mt-2">
+              <p class="title mb-2 is-4">Pilihan Menu</p>
+              <% if (typeof menus !== "undefined" ) { %>
+
+              <div class="columns is-mobile is-centered">
+                <div class="column">
+                <% menus.forEach(el=> { %>
+                  <a
+                    href="<%= el.link %>"
+                    class="button my-2 is-fullwidth <%= el.btn %>"
+                  >
+                    <i class="material-icons-round mr-2"> <%= el.icon %> </i>
+                    <span class="is-capitalized"> <%= el.text %> </span>
+                  </a>
+                  <% }) %>
+                </div>
+              </div>
+
+              <% } else { %>
+              <p class="subtitle">- Belum ada menu -</p>
+              <% } %>
+            </div>
+            <!-- END Box Menu -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+  </body>
+</html>

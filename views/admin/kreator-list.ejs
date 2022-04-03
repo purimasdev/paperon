@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Box List -->
+            <div class="box has-background-grey-lighter mb-2 px-2">
+              <% if (kreators.length> 0) { %> <% kreators.forEach(el=> { %>
+              <a href="/admin/kreator-detail/?id=<%= el._id %>" class="box p-2 mb-2">
+                <div class="columns">
+                  <div class="column">
+                    <div class="columns is-mobile">
+                      <div class="column is-narrow">
+                        <figure class="image is-64x64">
+                          <img src="<%= pml.avatar %>" alt="Image" />
+                        </figure>
+                      </div>
+                      <div class="column">
+                        <p class="title is-5 is-capitalized"><%= el.nama %></p>
+                        <p class="subtitle is-6"><%= el.email %></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <% }) %> <% } else { %>
+              <p class="subtitle">- Belum ada data -</p>
+              <% } %>
+            </div>
+            <!-- END Box List -->
+
+            <!-- Back -->
+            <%- include('../partials/back.ejs') %>
+            <!-- END Back -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+  </body>
+</html>

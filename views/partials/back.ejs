@@ -1,0 +1,21 @@
+<% if (typeof back !=='undefined' ) { %>
+<div class="box my-0 px-0 py-2 has-background-grey-light is-shadowless">
+  <div class="level is-mobile">
+    <% back.forEach(el=> { %>
+    <div class="level-item">
+      <a href="<%= el.link %>" class="button is-fullwidth <%= el.btn %>">
+        <i class="material-icons-round mr-2"> <%= el.icon %> </i>
+        <span class="is-capitalized"><%= el.text %></span>
+      </a>
+    </div>
+    <% }) %>
+  </div>
+</div>
+<% } else { %>
+<div class="box my-0 px-0 py-2 has-background-grey-light is-shadowless">
+  <a href="/" class="button is-fullwidth is-warning">
+    <i class="material-icons-round mr-2"> arrow_back_ios </i>
+    <span class="is-capitalized">kembali</span>
+  </a>
+</div>
+<% } %>

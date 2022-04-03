@@ -1,0 +1,20 @@
+<div class="box p-2 mb-2 has-background-grey-lighter">
+  <div class="columns is-mobile is-vcentered">
+    <div class="column is-narrow">
+      <a href="/" class="image is-96x96">
+        <img width="96" height="96" alt="logo" src="<%= pml.icon['192'] %>" />
+      </a>
+    </div>
+    <% if (typeof navTitle !== 'undefined') { %>
+    <div class="column has-text-left">
+      <p class="title is-3 mb-0 is-capitalized"><%= navTitle.a %></p>
+      <p class="title is-3 is-capitalized"><%= navTitle.b %></p>
+    </div>
+    <% } else { %>
+    <div class="column has-text-left">
+      <p class="title is-3"><%= pml.judul %></p>
+      <p class="subtitle is-5"><%= pml.versi %></p>
+    </div>
+    <% } %>
+  </div>
+</div>
