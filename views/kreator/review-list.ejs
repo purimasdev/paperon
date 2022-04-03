@@ -1,57 +1,66 @@
 <!DOCTYPE html>
 <html lang="en" class="has-background-grey-light">
-  <%- include('../partials/head.ejs') %>
+<%- include('../partials/head.ejs') %>
+
   <body>
     <!-- Tablet and Up -->
     <%- include('../partials/tablet-up.ejs') %>
-    <!-- END Tablet and Up -->
+      <!-- END Tablet and Up -->
 
-    <!-- Mobile View -->
-    <div class="is-hidden-tablet">
-      <!-- Nav -->
-      <%- include('../partials/nav.ejs') %>
-      <!-- END Nav -->
-      <div
-        class="hero has-background-grey-light is-fullheight has-text-centered"
-      >
-        <div class="hero-body p-2">
-          <div class="container">
-            <!-- Brand -->
-            <%- include('../partials/brand.ejs') %>
-            <!-- END Brand -->
+      <!-- Mobile View -->
+      <div class="is-hidden-tablet">
+        <!-- Nav -->
+        <%- include('../partials/nav.ejs') %>
+          <!-- END Nav -->
+          <div class="hero has-background-grey-light is-fullheight has-text-centered">
+            <div class="hero-body p-2">
+              <div class="container">
+                <!-- Brand -->
+                <%- include('../partials/brand.ejs') %>
+                  <!-- END Brand -->
 
-            <!-- Review List -->
-            <div class="box has-background-grey-lighter m-0 p-2">
-              <% if (lists.length > 0) { %>
-              <div>
-                <% lists.forEach(el => { %>
-                <a href="/kreator/review/?id=<%= el._id %>" class="box m-2 p-2">
-                  <div class="level">
-                    <div class="level-item my-0">
-                      <p class="title is-6"><%= el.judul %></p>
-                    </div>
-                    <div class="level-item mt-2">
-                      <p class="help"><%= el.createdAt %></p>
-                    </div>
+                  <!-- Review List -->
+                  <div class="box has-background-grey-lighter m-0 p-2">
+                    <% if (lists.length> 0) { %>
+                      <div>
+                        <% lists.forEach(el=> { %>
+                          <a href="/kreator/review/?id=<%= el._id %>" class="box m-2 p-2">
+                            <div class="level">
+                              <div class="level-item my-0">
+                                <p class="title is-6">
+                                  <%= el.judul %>
+                                </p>
+                              </div>
+                              <div class="level-item mt-2">
+                                <p class="help">
+                                  <%= el.createdAt %>
+                                </p>
+                              </div>
+                            </div>
+                          </a>
+                          <% }) %>
+                      </div>
+                      <% } else { %>
+                        <p class="title is-5 mb-2">
+                          - Belum ada kuesioner dengan status [Review] -
+                        </p>
+                        <p class="help">
+                          Buat kuesioner <a href="/kreator/kuesioner-tambah">disini</a>
+                        </p>
+                        <% } %>
                   </div>
-                </a>
-                <% }) %>
+                  <!-- END Review List -->
+
+                  <!-- Back -->
+                  <%- include('../partials/back.ejs') %>
+                    <!-- END Back -->
+
               </div>
-              <% } else { %>
-              <p class="title is-5 mb-2">
-                - Belum ada kuesioner dengan status [Review] -
-              </p>
-              <p class="help">
-                Buat kuesioner <a href="/kreator/kuesioner-tambah">disini</a>
-              </p>
-              <% } %>
             </div>
-            <!-- END Review List -->
           </div>
-        </div>
       </div>
-    </div>
-    <!-- END Mobile View -->
-    <%- include('../partials/script.ejs') %>
+      <!-- END Mobile View -->
+      <%- include('../partials/script.ejs') %>
   </body>
+
 </html>

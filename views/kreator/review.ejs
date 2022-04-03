@@ -1,112 +1,155 @@
 <!DOCTYPE html>
 <html lang="en" class="has-background-grey-light">
-  <%- include('../partials/head.ejs') %>
-  <link
-    rel="stylesheet"
-    type="text/css"
-    href="/bulmaEX/bulma-calendar/dist/css/bulma-calendar.min.css"
-  />
+<%- include('../partials/head.ejs') %>
+  <link rel="stylesheet" type="text/css" href="/bulmaEX/bulma-calendar/dist/css/bulma-calendar.min.css" />
   <link rel="stylesheet" type="text/css" href="/bulmaRad/css/main.min.css" />
   <link rel="stylesheet" type="text/css" href="/bulmaCB/css/main.min.css" />
 
   <body>
     <!-- Tablet and Up -->
     <%- include('../partials/tablet-up.ejs') %>
-    <!-- END Tablet and Up -->
+      <!-- END Tablet and Up -->
 
-    <!-- Mobile View -->
-    <div class="is-hidden-tablet">
-      <!-- Nav -->
-      <%- include('../partials/nav.ejs') %>
-      <!-- END Nav -->
-      <div
-        class="hero has-background-grey-light is-fullheight has-text-centered"
-      >
-        <div class="hero-body p-2">
-          <div class="container">
-            <!-- Brand -->
-            <%- include('../partials/brand.ejs') %>
-            <!-- END Brand -->
+      <!-- Mobile View -->
+      <div class="is-hidden-tablet">
+        <!-- Nav -->
+        <%- include('../partials/nav.ejs') %>
+          <!-- END Nav -->
+          <div class="hero has-background-grey-light is-fullheight has-text-centered">
+            <div class="hero-body p-2">
+              <div class="container">
+                <!-- Brand -->
+                <%- include('../partials/brand.ejs') %>
+                  <!-- END Brand -->
 
-            <!-- Info Kuesioner -->
-            <div class="box has-background-grey-lighter mb-2 p-2">
-              <p class="title is-5">Info Kuesioner</p>
-              <% if (typeof form !=='undefined' ) { %>
-              <div class="box p-2">
-                <p class="title is-5"><%= form.judul %></p>
-                <p class="subtitle is-6 mb-2"><%= form.deskripsi %></p>
-                <p class="help"><%= form.createdAt %></p>
+                  <!-- Info Kuesioner -->
+                  <div class="box has-background-grey-lighter mb-2 p-2">
+                    <p class="title is-5">Info Kuesioner</p>
+                    <% if (typeof form !=='undefined' ) { %>
+                      <div class="box p-2">
+                        <p class="title is-5">
+                          <%= form.judul %>
+                        </p>
+                        <p class="subtitle is-6 mb-2">
+                          <%= form.deskripsi %>
+                        </p>
+                        <p class="help">
+                          <%= form.createdAt %>
+                        </p>
+                      </div>
+                      <% } else { %>
+                        <p class="subtitle is-4">- Tidak ada data kuesioner -</p>
+                        <% } %>
+                  </div>
+                  <!-- END Info Kuesioner -->
+
+                  <!-- Form Kuesioner -->
+                  <div class="box has-background-grey-lighter my-2 p-2">
+                    <% if (typeof form !=='undefined' ) { %>
+                      <div>
+                        <% form.pertanyaan.forEach(el=> { %>
+                          <div>
+                            <%- ubahPertanyaan(el,form.tersusun?'on':'off' ) %>
+                          </div>
+                          <% }) %>
+                      </div>
+                      <% } else { %>
+                        <p class="subtitle is-4">- Tidak ada data kuesioner -</p>
+                        <% } %>
+
+                          <!-- Menu -->
+                          <div class="field">
+                            <div class="control">
+                              <button id="susun" onclick="susunForm()" class="button is-fullwidth">
+                                <i class="material-icons-round mr-2"> adb </i>
+                                <span class="is-capitalized"> susun </span>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="field">
+                            <div class="control">
+                              <button id="simpan" onclick="simpanForm()" class="button is-fullwidth">
+                                <i class="material-icons-round mr-2"> adb </i>
+                                <span class="is-capitalized"> simpan </span>
+                              </button>
+                            </div>
+                          </div>
+                          <!-- END Menu -->
+                  </div>
+                  <!-- END Form Kuesioner -->
+
+                  <!-- Back -->
+                  <%- include('../partials/back.ejs') %>
+                    <!-- END Back -->
               </div>
-              <% } else { %>
-              <p class="subtitle is-4">- Tidak ada data kuesioner -</p>
-              <% } %>
             </div>
-            <!-- END Info Kuesioner -->
-
-            <!-- Form Kuesioner -->
-            <div class="box has-background-grey-lighter mt-2 p-2">
-              <% if (typeof form !=='undefined') { %>
-              <div>
-                <% form.pertanyaan.forEach(el => { %>
-                <div><%- ubahPertanyaan(el,form.tersusun?'on':'off' ) %></div>
-                <% }) %>
-              </div>
-              <% } else { %>
-              <p class="subtitle is-4">- Tidak ada data kuesioner -</p>
-              <% } %>
-
-              <!-- Menu -->
-              <div class="field">
-                <div class="control">
-                  <button id="susun" class="button is-fullwidth">
-                    <i class="material-icons-round mr-2"> adb </i>
-                    <span class="is-capitalized"> susun </span>
-                  </button>
-                </div>
-              </div>
-              <div class="field">
-                <div class="control">
-                  <button id="simpan" class="button is-fullwidth">
-                    <i class="material-icons-round mr-2"> adb </i>
-                    <span class="is-capitalized"> simpan </span>
-                  </button>
-                </div>
-              </div>
-              <!-- END Menu -->
-            </div>
-            <!-- END Form Kuesioner -->
           </div>
-        </div>
       </div>
-    </div>
-    <!-- END Mobile View -->
-    <script src="/bulmaEx/bulma-calendar/dist/js/bulma-calendar.min.js"></script>
-    <script>
-      let today = new Date();
-      // Initialize all input of date type.
-      const calendars = bulmaCalendar.attach('[type="date"]', {
-        type: "date",
-        dateFormat: "DD-MM-YYYY",
-        startDate: today,
-        displayMode: "dialog",
-      });
-    </script>
-    <script>
-      var isOrdered = "<%- form.hasOwnProperty('tersusun') %>";
-      let susunBtn = document.getElementById("susun");
-      let simpanBtn = document.getElementById("simpan");
+      <!-- END Mobile View -->
+      <script src="/bulmaEx/bulma-calendar/dist/js/bulma-calendar.min.js"></script>
+      <script>
+        let today = new Date();
+        // Initialize all input of date type.
+        const calendars = bulmaCalendar.attach('[type="date"]', {
+          type: "date",
+          dateFormat: "DD-MM-YYYY",
+          startDate: today,
+          displayMode: "dialog",
+        });
+      </script>
+      <script>
+        let fId = "<%- form._id %>"
+        let isOrdered = "<%- form.tersusun %>";
+        let susunBtn = document.getElementById("susun");
+        let simpanBtn = document.getElementById("simpan");
+        async function susunForm(e) {
+          let data = { aksi: 'susun', fId }
+          let result = await fetch(`/kreator/review/?id=${fId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }).then((res) => res.json());
 
-      function checkValue(value) {
-        if (value === "false") {
-          susunBtn.disabled = false;
-          simpanBtn.disabled = true;
-        } else {
-          susunBtn.disabled = true;
-          simpanBtn.disabled = false;
+          if (result.status === "ok") {
+            alert(result.message);
+            window.location.reload();
+          } else {
+            alert(result.message);
+          }
         }
-      }
-      checkValue(isOrdered);
-    </script>
-    <%- include('../partials/script.ejs') %>
+
+        async function simpanForm(e) {
+          let data = { aksi: 'simpan', fId }
+          let result = await fetch(`/kreator/review/?id=${fId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }).then((res) => res.json());
+
+          if (result.status === "ok") {
+            alert(result.message);
+            window.location.assign('/kreator/publikasi');
+          } else {
+            alert(result.message);
+          }
+        }
+
+        function checkValue(value) {
+          if (value === "false") {
+            susunBtn.disabled = false;
+            simpanBtn.disabled = true;
+          } else {
+            susunBtn.disabled = true;
+            simpanBtn.disabled = false;
+          }
+        }
+        checkValue(isOrdered);
+      </script>
+      <%- include('../partials/script.ejs') %>
   </body>
+
 </html>

@@ -21,12 +21,32 @@
             <!-- END Brand -->
 
             <!-- List Pertanyaan -->
-<% if (forms.length > 0) { %>
- 
-  <% } else { %>
-   <p class="title is-4">- Belum ada kuesioner -</p>
-   <p class="subtitle is-4">Buat kuesioner <a href="/kreator/kuesioner-tambah">disini</a></p>
-<% } %>
+            <div class="box has-background-grey-lighter m-0 p-2">
+              <% if (forms.length > 0) { %>
+                <div>
+                  <% forms.forEach(el=> { %>
+                    <a href="/kreator/kuesioner-detail/?id=<%= el._id %>" class="box m-2 p-2 <%= el.status == "publish"?"has-background-info-light":"has-background-warning-light" %> ">
+                      <div class="level">
+                        <div class="level-item my-0">
+                          <p class="title is-6">
+                            <%= el.judul %>
+                          </p>
+                        </div>
+                        <div class="level-item mt-2">
+                          <p class="help">
+                            <%= el.createdAt %>
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <% }) %>
+                </div>
+                <% } else { %>
+                 <p class="title is-5 mb-2">- Belum ada kuesioner -</p>
+                 <p class="help">Buat kuesioner <a href="/kreator/kuesioner-tambah">disini</a></p>
+              <% } %>
+
+            </div>
             <!-- END List Pertanyaan -->
 
             <!-- Back -->

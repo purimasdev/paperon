@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const sortArray = require('sort-array')
 const ObjectId = require('mongoose').Types.ObjectId
 // const User = require('../models/User')
 const Question = require('../models/Question')
@@ -119,13 +120,22 @@ router.route('/pertanyaan-tambah')
     }
   })
 
-router.get('/kuesioner-list', (req, res) => {
+router.get('/kuesioner-list', async (req, res) => {
+  let forms = await Form
+    .find({ userId: res.locals.user._id, stage: 'done' })
+    .select(["_id", "stage", "judul", "createdAt"])
+    .sort({ updatedAt: -1 })
+    .lean()
+  forms.forEach(form => {
+    form.createdAt = simpleDate(form.createdAt)
+  })
   res.render('kreator/kuesioner-list', {
     navTitle: { a: 'List', b: 'Kuesioner' },
     back: [
       { text: 'dash', link: '/kreator', icon: '', btn: '', },
       { text: 'tambah', link: '/kreator/kuesioner-tambah', icon: '', btn: '', },
     ],
+    forms
   })
 })
 
@@ -327,8 +337,8 @@ router.route('/order')
       for (let i = 0; i < pertanyaan.length; i++) {
         for (let j = 0; j < keys.length; j++) {
           if (pertanyaan[i]._id == keys[j]) {
-            pertanyaan[i].prioritas = body[keys[j]].prioritas
-            pertanyaan[i].indeks = body[keys[j]].indeks
+            pertanyaan[i].prioritas = parseInt(body[keys[j]].prioritas)
+            pertanyaan[i].indeks = parseInt(body[keys[j]].indeks)
           }
         }
       }
@@ -407,20 +417,63 @@ router.route('/review')
     })
   })
   .post(async (req, res) => {
-    console.log(req.body)
-    console.log(req.method)
-  })
-  .put(async (req, res) => {
-    console.log(req.body)
-    console.log(req.method)
+    let { aksi, fId } = req.body
+    switch (aksi) {
+      case "susun":
+        // ambil data form
+        let { pertanyaan } = await Form.findById(fId).lean()
+        // sortir
+        sortArray(pertanyaan, {
+          by: ['prioritas', 'indeks'],
+          order: ['prioritas', 'indeks'],
+          customOrders: {
+            prioritas: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            indeks: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+          }
+        })
+        // simpan
+        let susun = await Form.findByIdAndUpdate(fId,
+          { pertanyaan, "tersusun": true },
+          { new: true }
+        )
+        // Check
+        if (susun) {
+          return res.status(201).json({ status: 'ok', message: 'Memulai proses susun, halaman akan dimuat ulang' })
+        } else {
+          return res.status(400).json({ status: 'error', message: error.message })
+        }
+
+      case "simpan":
+        let save = await Form.findByIdAndUpdate(fId,
+          { "stage": "done" },
+          { new: true }
+        )
+        // Check
+        if (save) {
+          return res.status(201).json({ status: 'ok', message: 'Kuesioner telah selesai dibuat, memuat halaman Publikasi' })
+        } else {
+          return res.status(400).json({ status: 'error', message: error.message })
+        }
+
+      default:
+        return res.status(400).json({ status: 'error', message: 'Aksi tidak diketahui' })
+    }
   })
 
-router.get('/publikasi', (req, res) => {
+router.get('/publikasi', async (req, res) => {
+  let forms = await Form
+    .find({ userId: res.locals.user._id, stage: 'done' })
+    // .select(["_id", "stage", "judul","deskripsi", "createdAt"])
+    .sort({ updatedAt: -1 })
+    .lean()
+    console.log(forms)
   res.render('kreator/Publikasi', {
     navTitle: { a: 'Status', b: 'Publikasi' },
     back: [
       { text: 'dash', link: '/kreator', icon: '', btn: '', },
     ],
+    forms,
+    potongStr
   })
 })
 
