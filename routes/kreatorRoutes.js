@@ -1,17 +1,12 @@
 const router = require('express').Router()
 const sortArray = require('sort-array')
-const ObjectId = require('mongoose').Types.ObjectId
-// const User = require('../models/User')
+const buatKode = require('generate-api-key')
+
 const Question = require('../models/Question')
 const Form = require('../models/Form')
-// const Result = require('../models/Result')
+const Result = require('../models/Result')
 const { ubahTipe, potongStr, ubahPertanyaan, cetakTag } = require('../helpers/textHelper')
 const { simpleDate, simpleDateTime } = require('../helpers/timeHelper')
-
-function toObjectId(id) {
-  let result = new ObjectId(id)
-  return result
-}
 
 // INDEX
 router.get('/', (req, res) => {
@@ -123,7 +118,7 @@ router.route('/pertanyaan-tambah')
 router.get('/kuesioner-list', async (req, res) => {
   let forms = await Form
     .find({ userId: res.locals.user._id, stage: 'done' })
-    .select(["_id", "stage", "judul", "createdAt"])
+    // .select(["_id", "stage", "judul", "createdAt"])
     .sort({ updatedAt: -1 })
     .lean()
   forms.forEach(form => {
@@ -139,13 +134,37 @@ router.get('/kuesioner-list', async (req, res) => {
   })
 })
 
-router.get('/kuesioner-detail', (req, res) => {
+router.get('/kuesioner-detail', async (req, res) => {
+  let form = undefined
+  try {
+    // Check if req URL has query
+    if (Object.keys(req.query).length > 0) {
+      // Check if req.query has id
+      if (req.query['id']) {
+        // set req.query to query object
+        form = await Form
+          .findById(req.query['id'])
+          .populate("userId", "nama email")
+          .lean()
+        form.createdAt = simpleDate(form.createdAt)
+      } else {
+        return res.redirect('/404')
+      }
+    } else {
+      return res.redirect('/404')
+    }
+  } catch (error) {
+    console.log(error)
+  }
   res.render('kreator/kuesioner-detail', {
     navTitle: { a: 'Detail', b: 'Kuesioner' },
     back: [
       { text: 'dash', link: '/kreator', icon: '', btn: '', },
       { text: 'list', link: '/kreator/kuesioner-list', icon: '', btn: '', },
     ],
+    form,
+    ubahPertanyaan,
+    cetakTag
   })
 })
 
@@ -460,40 +479,110 @@ router.route('/review')
     }
   })
 
-router.get('/publikasi', async (req, res) => {
+router.route('/publikasi')
+  .get(async (req, res) => {
+    let forms = await Form
+      .find({ userId: res.locals.user._id, stage: 'done' })
+      // .select(["_id", "stage", "judul","deskripsi", "createdAt"])
+      .sort({ updatedAt: -1 })
+      .lean()
+    res.render('kreator/Publikasi', {
+      navTitle: { a: 'Status', b: 'Publikasi' },
+      back: [
+        { text: 'dash', link: '/kreator', icon: '', btn: '', },
+      ],
+      forms,
+      potongStr
+    })
+  })
+  .post(async (req, res) => {
+    // destructure
+    let { status, kode, fId } = req.body
+    let { id } = req.query
+    // create code
+    let newKode = buatKode({
+      method: 'string',
+      length: 6,
+      pool: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    })
+    // update object
+    let update = {
+      status
+    }
+    // change status
+    if (status == 'publish') {
+      update.status = 'unpublish'
+    } else if (status == 'unpublish') {
+      update.status = 'publish'
+    }
+    // add code if not exist
+    if (!kode) {
+      update.kode = newKode
+    }
+
+    let changed = await Form.findByIdAndUpdate(id,
+      { ...update },
+      { new: true }
+    )
+    // Check
+    if (changed) {
+      return res.status(201).json({ status: 'ok', message: 'Status berhasil diubah, halaman dimuat ulang' })
+    } else {
+      return res.status(400).json({ status: 'error', message: error.message })
+    }
+
+  })
+
+router.get('/hasil', async (req, res) => {
   let forms = await Form
-    .find({ userId: res.locals.user._id, stage: 'done' })
-    // .select(["_id", "stage", "judul","deskripsi", "createdAt"])
+    .find({ userId: res.locals.user._id, stage: 'done', status: "publish" })
+    .select(["_id", "judul", "status", "createdAt"])
     .sort({ updatedAt: -1 })
     .lean()
-    console.log(forms)
-  res.render('kreator/Publikasi', {
-    navTitle: { a: 'Status', b: 'Publikasi' },
-    back: [
-      { text: 'dash', link: '/kreator', icon: '', btn: '', },
-    ],
-    forms,
-    potongStr
+  forms.forEach(form => {
+    form.createdAt = simpleDate(form.createdAt)
   })
-})
-
-router.get('/hasil-list', (req, res) => {
   res.render('kreator/hasil-list', {
     navTitle: { a: 'List', b: 'Hasil' },
     back: [
       { text: 'dash', link: '/kreator', icon: '', btn: '', },
     ],
+    forms
   })
 })
 
-router.get('/hasil-detail', (req, res) => {
-  res.render('kreator/hasil-detail', {
-    navTitle: { a: 'Detail', b: 'Hasil' },
-    back: [
-      { text: 'dash', link: '/kreator', icon: '', btn: '', },
-      { text: 'list', link: '/kreator/detail-list', icon: '', btn: '', },
-    ],
-  })
+router.get('/hasil-detail', async (req, res) => {
+  let kuesioner = undefined
+  let jawaban = undefined
+  if (req.query.hasOwnProperty("formId")) {
+    kuesioner = await Form.findOne({ _id: req.query['formId'], userId: res.locals.user._id }).lean()
+    jawaban = await Result
+    .find({ formId: req.query['formId'] })
+    .lean()
+
+    res.render('kreator/hasil-detail', {
+      navTitle: { a: 'Detail', b: 'Hasil Kuesioner' },
+      back: [
+        { text: 'dash', link: '/kreator', icon: '', btn: '', },
+        { text: 'list', link: '/kreator/hasil-list', icon: '', btn: '', },
+      ],
+      kuesioner,
+      jawaban,
+      view: [
+        { text: 'mode 1', link: '#', icon: 'arrow_back_ios', btn: '', isDisabled: 'disabled' },
+        { text: 'mode 2', link: '#', icon: 'arrow_back_ios', btn: '', isDisabled: 'disabled' },
+        { text: 'mode 3', link: '#', icon: 'arrow_back_ios', btn: '', isDisabled: 'disabled' },
+      ],
+      print: [
+        { text: 'cetak', link: '#', icon: 'arrow_back_ios', btn: '', isDisabled: 'disabled' },
+        { text: 'unduh', link: '#', icon: 'arrow_back_ios', btn: '', isDisabled: 'disabled' },
+      ]
+    })
+  } else {
+    res.status(400).render('home/error', {
+      navTitle: { a: '400', b: 'Format requet tidak sesuai' },
+    })
+  }
 })
 
 module.exports = router

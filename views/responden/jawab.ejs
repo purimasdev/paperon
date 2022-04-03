@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="/bulmaEX/bulma-calendar/dist/css/bulma-calendar.min.css"
+  />
+  <link rel="stylesheet" type="text/css" href="/bulmaRad/css/main.min.css" />
+  <link rel="stylesheet" type="text/css" href="/bulmaCB/css/main.min.css" />
+
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Box Jawab -->
+            <% if (!kuesioner) { %>
+            <!-- Not Found -->
+            <div class="box has-background-grey-lighter my-2 p-2">
+              <p class="title">Kuesioner tidak ditemukan</p>
+              <p class="subtitle">Cek kode kembali</p>
+
+              <a href="/responden/cari" class="button">
+                <i class="material-icons-round mr-2"> search </i>
+                <span class="is-capitalized"> Cari kembali </span>
+              </a>
+            </div>
+            <!-- END Not Found -->
+            <% } else { %>
+            <!-- Kuesioner -->
+
+            <!-- Info -->
+            <div class="box has-background-grey-lighter my-2 p-2">
+              <p class="title is-5 mb-2">Info Kuesioner</p>
+              <div class="box mb-2 p-2">
+                <p class="title is-5"><%= kuesioner.judul %></p>
+                <p class="subtitle is-6"><%= kuesioner.deskripsi %></p>
+              </div>
+              <p class="title is-6 mb-2">Info Kreator</p>
+              <div class="box p-2">
+                <p class="title is-5"><%= kreator.nama %></p>
+                <p class="subtitle is-6"><%= kreator.email %></p>
+              </div>
+            </div>
+            <!-- END Info -->
+
+            <!-- Form Pertanyaan -->
+            <form id="formK" action="/responden/jawab" method="POST">
+              <input type="hidden" name="formId" value="<%= kuesioner._id %>" />
+              <div class="box has-background-grey-lighter my-2 p-2">
+                <div class="level">
+                  <div class="level-item">
+                    <p class="title is-5">Identitas Responden</p>
+                  </div>
+                  <div class="box my-2 p-2">
+                    <div class="field">
+                      <label class="label">Nama</label>
+                      <div class="control">
+                        <input
+                          class="input identitas"
+                          type="text"
+                          name="nama"
+                          value="wiss"
+                        />
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label class="label">Email</label>
+                      <div class="control">
+                        <input
+                          class="input identitas"
+                          type="email"
+                          name="email"
+                          value="wi@wis.com"
+                        />
+                      </div>
+                    </div>
+                    <div class="field">
+                      <div class="control">
+                        <button
+                          type="button"
+                          id="set_btn"
+                          class="button is-info"
+                        >
+                          Set
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--  -->
+              <div
+                id="qSec"
+                class="box has-background-grey-lighter my-2 p-2 is-hidden"
+              >
+                <div class="level">
+                  <div class="level-item">
+                    <p class="title is-5">List Pertanyaan</p>
+                  </div>
+                  <!-- Render -->
+                  <% kuesioner.pertanyaan.forEach(el=> { %> <%-
+                  ubahPertanyaan(el, '' , 'split' ) %> <% }) %>
+                  <!-- END Render -->
+                  <!-- Tombol -->
+                  <div class="level-item">
+                    <button
+                      id="save_btn"
+                      class="button is-fullwidth is-success"
+                      disabled
+                    >
+                      <i class="material-icons-round mr-2"> save </i>
+                      <span class="is-capitalized"> simpan </span>
+                    </button>
+                  </div>
+                  <!-- END Tombol -->
+                </div>
+              </div>
+            </form>
+            <!-- END Form Pertanyaan -->
+            <!-- END Kuesioner -->
+            <% } %>
+            <!-- END Box Jawab -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+    <script src="/bulmaEx/bulma-calendar/dist/js/bulma-calendar.min.js"></script>
+    <script src="/validator/validator.min.js"></script>
+    <script>
+      let today = new Date();
+      // Initialize all input of date type.
+      const calendars = bulmaCalendar.attach('[type="date"]', {
+        type: "date",
+        dateFormat: "DD-MM-YYYY",
+        startDate: today,
+        displayMode: "dialog",
+      });
+    </script>
+    <script>
+      let set_btn = document.getElementById("set_btn");
+      let identitasS = document.getElementsByClassName("identitas");
+      let qSec = document.getElementById("qSec");
+      let save_btn = document.getElementById("save_btn");
+      let formK = document.getElementById("formK");
+
+      // Cek opsi kosong
+      function checkOpsi(arr) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].value === "") {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      // Check format email
+      function checkEmail(arr) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].name == "email") {
+            return validator.isEmail(arr[i].value);
+          }
+        }
+      }
+
+      // Ubah State Input Func
+      function inputDis(arr, state) {
+        for (let i = 0; i < arr.length; i++) {
+          arr[i].disabled = state;
+        }
+      }
+
+      // Set Identitas dan buka form
+      set_btn.onclick = function () {
+        if (!checkOpsi(identitasS)) {
+          return alert("Masih ada kolom identitas yang kosong");
+        }
+        if (!checkEmail(identitasS)) {
+          return alert("Format Email salah");
+        }
+        qSec.classList.remove("is-hidden");
+        inputDis(identitasS, true);
+        inputDis([set_btn], true);
+        inputDis([save_btn], false);
+      };
+
+      let enableInput = () => {
+        inputDis(identitasS, false);
+      };
+
+      save_btn.onclick = () => {
+        enableInput();
+      };
+
+      const form = document.querySelector("form");
+      form.addEventListener("submit", submitForm);
+
+      async function submitForm(e) {
+        e.preventDefault();
+        let formData = {};
+
+        // HANDLE RADIO INPUT
+        let handleTypeRadio = {};
+        for (let i = 0; i < this.elements.length; i++) {
+          if (this.elements[i].type === "radio" && this.elements[i].checked) {
+            // console.log(this.elements[i]);
+            // console.log(this.elements[i].checked);
+            // console.log(this.elements[i].value);
+            // console.log(this.elements[i].nextElementSibling.nextElementSibling.innerText);
+            handleTypeRadio[this.elements[i].name] =
+              this.elements[i].nextElementSibling.nextElementSibling.innerText;
+          }
+        }
+        // HANDLE CHECKBOX INPUT
+        let handleTypeCheckBox = {};
+        // Create array
+        for (let i = 0; i < this.elements.length; i++) {
+          if (this.elements[i].type === "checkbox") {
+            // console.log(this.elements[i].nextElementSibling.nextElementSibling.innerText);
+            handleTypeCheckBox[this.elements[i].name] = [];
+          }
+        }
+        // push data
+        for (let i = 0; i < this.elements.length; i++) {
+          if (
+            this.elements[i].type === "checkbox" &&
+            this.elements[i].checked
+          ) {
+            // console.log(this.elements[i].nextElementSibling.nextElementSibling.innerText);
+            handleTypeCheckBox[this.elements[i].name].push(
+              this.elements[i].nextElementSibling.nextElementSibling.innerText
+            );
+          }
+        }
+
+        // HANDLE TEXT INPUT
+        let handleTypeText = {};
+        for (let i = 0; i < this.elements.length; i++) {
+          if (this.elements[i].tagName === "BUTTON") continue;
+          if (this.elements[i].name === "") continue;
+          if (this.elements[i].type === "radio") continue;
+          handleTypeText[this.elements[i].name] = this.elements[i].value;
+        }
+
+        // console.log(handleTypeText);
+        // Destructure to get indentitas(nama, email) and formId
+        let { nama, email, formId, ...inText } = handleTypeText;
+
+        // Combine all answer
+        let combine = { ...inText, ...handleTypeRadio, ...handleTypeCheckBox };
+
+        formData = {
+          formId,
+          identitas: {nama, email},
+          jawab : combine
+        }
+        // console.log(formData)
+
+        let result = await fetch(this.action, {
+          method: this.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }).then((res) => res.json());
+
+        if (result.status === "ok") {
+          alert(result.message);
+          // window.location.assign(result.data);
+          window.location.assign("/");
+        } else {
+          alert(result.message);
+        }
+      }
+    </script>
+  </body>
+</html>

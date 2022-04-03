@@ -20,15 +20,34 @@
             <%- include('../partials/brand.ejs') %>
             <!-- END Brand -->
 
-            <!-- Box Landing -->
-            <div class="box has-background-grey-lighter">
-              <p class="title is-capitalized">mulai menjawab</p>
-              <a href="/responden/cari" class="button is-fullwidth">
-                <i class="material-icons-round mr-2"> search </i>
-                <span class="is-capitalized">cari kuesioner</span>
-              </a>
+            <!-- List Kuesioner -->
+            <div class="box has-background-grey-lighter m-0 p-2">
+              <% if (forms.length > 0) { %>
+                <div>
+                  <% forms.forEach(el=> { %>
+                    <a href="/kreator/hasil-detail/?formId=<%= el._id %>" class="box m-2 p-2 <%= el.status == "publish"?"has-background-info-light":"has-background-warning-light" %> ">
+                      <div class="level">
+                        <div class="level-item my-0">
+                          <p class="title is-6">
+                            <%= el.judul %>
+                          </p>
+                        </div>
+                        <div class="level-item mt-2">
+                          <p class="help">
+                            <%= el.createdAt %>
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <% }) %>
+                </div>
+                <% } else { %>
+                 <p class="title is-5 mb-2">- Belum ada kuesioner -</p>
+                 <p class="help">Buat kuesioner <a href="/kreator/kuesioner-tambah">disini</a></p>
+              <% } %>
+
             </div>
-            <!-- END Box Landing -->
+            <!-- END List Kuesioner -->
 
             <!-- Back -->
             <%- include('../partials/back.ejs') %>

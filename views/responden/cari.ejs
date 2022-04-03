@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-light">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- Tablet and Up -->
+    <%- include('../partials/tablet-up.ejs') %>
+    <!-- END Tablet and Up -->
+
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
+
+            <!-- Form Pencarian -->
+            <form id="form" action="/responden/cari" method="POST">
+              <div class="box has-background-grey-lighter mt-2">
+                <div class="field">
+                  <label class="label is-capitalized">masukkan kode</label>
+                  <div class="control is-expanded">
+                    <input class="input" type="text" name="kode" />
+                  </div>
+                  <p class="help">Gunakan Huruf Kapital</p>
+                </div>
+                <button class="button is-fullwidth">
+                  <i class="material-icons-round mr-2"> search </i>
+                  <span class="is-capitalized">cari kuesioner</span>
+                </button>
+              </div>
+            </form>
+            <!-- END Form Pencarian -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+    <script>
+      const form = document.querySelector("form");
+      form.addEventListener("submit", submitForm);
+
+      async function submitForm(e) {
+        e.preventDefault();
+        //  remove button from data
+        let formData = {};
+        for (let i = 0; i < this.elements.length; i++) {
+          if (this.elements[i].tagName === "BUTTON") continue;
+          formData[this.elements[i].name] = this.elements[i].value;
+        }
+
+        let result = await fetch(this.action, {
+          method: this.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }).then((res) => res.json());
+
+        if (result.status === "ok") {
+          alert(result.message);
+          window.location.assign(result.data);
+          // window.location.assign("/kreator");
+        } else {
+          alert(result.message);
+        }
+      }
+    </script>
+  </body>
+</html>

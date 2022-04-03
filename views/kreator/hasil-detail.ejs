@@ -20,15 +20,128 @@
             <%- include('../partials/brand.ejs') %>
             <!-- END Brand -->
 
-            <!-- Box Landing -->
-            <div class="box has-background-grey-lighter">
-              <p class="title is-capitalized">mulai menjawab</p>
-              <a href="/responden/cari" class="button is-fullwidth">
-                <i class="material-icons-round mr-2"> search </i>
-                <span class="is-capitalized">cari kuesioner</span>
-              </a>
+            <!-- Render Hasil -->
+            <!-- Bagian Info Kuesioner -->
+            <div class="box has-background-grey-lighter m-0 p-2">
+              <% if (typeof kuesioner !== 'undefined' ) { %>
+              <p class="title is-5 mb-2">Info Kuesioner</p>
+              <div class="box mb-2 p-2">
+                <p class="title is-5"><%= kuesioner.judul %></p>
+                <p class="subtitle is-5 mb-2"><%= kuesioner.deskripsi %></p>
+              </div>
+              <!-- Tags -->
+              <div class="box mb-2 p-2">
+                <div class="field is-grouped is-grouped-multiline">
+                  <div class="control">
+                    <div class="tags has-addons">
+                      <span class="tag is-dark">Responden</span>
+                      <span class="tag is-info"> <%= jawaban.length %> </span>
+                    </div>
+                  </div>
+
+                  <div class="control">
+                    <div class="tags has-addons">
+                      <span class="tag is-dark">Status</span>
+                      <% let color = kuesioner.status ==
+                      'publish'?'is-success':" is-danger" %>
+                      <span class="tag <%= color %>">
+                        <%=kuesioner.status %>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="control">
+                    <div class="tags has-addons">
+                      <span class="tag is-dark">Pertanyaan</span>
+                      <span class="tag is-primary">
+                        <%= kuesioner.pertanyaan.length %>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="control">
+                    <div class="tags has-addons">
+                      <span class="tag is-dark">Kode</span>
+                      <span class="tag is-info is-light">
+                        <%= kuesioner.kode %>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- END Tags -->
+
+              <!-- Print -->
+              <div class="box p-2">
+                <div class="columns is-mobile">
+                  <% print.forEach(el=> { %>
+                  <div class="column">
+                    <button class="button is-fullwidth <%= el.btn %>" disabled>
+                      <i class="material-icons-round mr-2"> <%= el.icon %> </i>
+                      <span class="is-capitalized"> <%= el.text %> </span>
+                    </button>
+                  </div>
+                  <% }) %>
+                </div>
+              </div>
+              <!-- END Print -->
+              <% } else { %>
+              <p class="subtitle is-4">-Tidak ada data-</p>
+              <% } %>
             </div>
-            <!-- END Box Landing -->
+            <!-- END Bagian Info Kuesioner -->
+
+            <!-- Bagian Hasil Jawaban -->
+            <div class="box has-background-grey-lighter my-2">
+              <p class="title is-5 mb-2">Jawaban</p>
+              <% for( let i = 0; i < kuesioner.pertanyaan.length; i++ ) { %>
+              <div class="box px-1 mb-2">
+                <p class="title is-5"><%= kuesioner.pertanyaan[i].teks %></p>
+                <% for( let j = 0; j < jawaban.length; j++ ) { %>
+                <div class="box mx-0 p-2">
+                  <div
+                    class="columns is-mobile is-vcentered"
+                    style="align-items: stretch"
+                  >
+                    <!-- Info Responden -->
+                    <div
+                      class="column has-background-primary-light is-one-third"
+                    >
+                      <p class="subtitle is-6 m-0">
+                        <%= jawaban[j].identitas.nama %>
+                      </p>
+                      <p class="help"><%= jawaban[j].identitas.email %></p>
+                    </div>
+                    <!-- END Info Responden -->
+                    <!-- Jawaban Responden -->
+                    <div class="column has-background-danger-light">
+                      <% for( let k=0; k < Object.keys(jawaban[j].jawab).length;
+                      k++ ) { %> <% if
+                      (Object.keys(jawaban[j].jawab)[k]==kuesioner.pertanyaan[i]._id)
+                      { %> <% if (kuesioner.pertanyaan[i].tipe=='checkbox' ||
+                      kuesioner.pertanyaan[i].tipe=='radio' ) { %>
+                      <p class="subtitle is-6">
+                        <%=
+                        Object.keys(jawaban[j].jawab[Object.keys(jawaban[j].jawab)[k]])
+                        %>
+                      </p>
+                      <% } else { %>
+                      <p class="subtitle is-6">
+                        <%= jawaban[j].jawab[Object.keys(jawaban[j].jawab)[k]]
+                        %>
+                      </p>
+                      <% } %> <% } %> <% } %>
+                    </div>
+                    <!-- END Jawaban Responden -->
+                  </div>
+                </div>
+                <% } %>
+              </div>
+              <% } %>
+            </div>
+            <!-- END Bagian Hasil Jawaban -->
+
+            <!-- END Render Hasil -->
 
             <!-- Back -->
             <%- include('../partials/back.ejs') %>

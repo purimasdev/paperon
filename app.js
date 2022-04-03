@@ -49,6 +49,7 @@ app.use('/bulma', express.static(__dirname + '/node_modules/bulma/css/'));
 app.use('/bulmaEX', express.static(__dirname + '/node_modules/bulma-extensions'));
 app.use('/bulmaRad', express.static(__dirname + '/node_modules/bulma-radio'));
 app.use('/bulmaCB', express.static(__dirname + '/node_modules/bulma-checkbox'));
+app.use('/validator', express.static(__dirname + '/node_modules/validator'));
 app.use('/icons', express.static(__dirname + '/node_modules/material-icons/iconfont'));
 
 // EXPRESS ROUTES

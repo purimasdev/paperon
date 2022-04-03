@@ -38,7 +38,7 @@ module.exports = {
       isDis = 'disabled'
       redText = 'has-text-danger'
     }
-    let { tipe, teks, opsi, id } = data
+    let { tipe, teks, opsi, _id } = data
     switch (tipe) {
       case 'short_text':
         return `
@@ -49,7 +49,7 @@ module.exports = {
             </div>
             <div class="field">
               <div class="control">
-                <input class="input" ${isRo} type="text" name="${id}" placeholder="Jawaban">
+                <input class="input" ${isRo} type="text" name="${_id}" placeholder="Jawaban">
               </div>
             </div>
         </div>
@@ -63,7 +63,7 @@ module.exports = {
             </div>
             <div class="field">
               <div class="control">
-                <textarea ${isRo} class="textarea" name="${id}" placeholder="Jawaban"></textarea>
+                <textarea ${isRo} class="textarea" name="${_id}" placeholder="Jawaban"></textarea>
               </div>
             </div>
         </div>
@@ -77,7 +77,7 @@ module.exports = {
             </div>
             <div class="field">
               <div class="control">
-                <input class="input" ${isRo} type="number" name="${id}" placeholder="Jawaban">
+                <input class="input" ${isRo} type="number" name="${_id}" placeholder="Jawaban">
               </div>
             </div>
         </div>
@@ -91,7 +91,7 @@ module.exports = {
             </div>
             <div class="field">
               <div class="control">
-              <input ${isRo} type="date" name="${id}" >
+              <input ${isRo} type="date" name="${_id}" >
               </div>
             </div>
         </div>
@@ -101,7 +101,7 @@ module.exports = {
           return `
           <div class="field">
             <label class="b-radio radio">
-              <input type="radio" ${isDis} name="[${id}][${el}]" >
+              <input type="radio" ${isDis} name="${_id}" data-text="${el}" >
               <span class="check"></span>
               <span class="control-label">${el}</span>
             </label>
@@ -122,7 +122,7 @@ module.exports = {
           return `
           <div class="field">
             <label class="b-checkbox checkbox" >
-              <input type="checkbox" ${isDis} name="${id}[${el}]" >
+              <input type="checkbox" ${isDis} name="${_id}" data-text="${el}" >
               <span class="check"></span>
               <span class="control-label">${el}</span>
             </label>

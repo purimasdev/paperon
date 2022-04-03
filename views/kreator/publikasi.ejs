@@ -1,92 +1,123 @@
 <!DOCTYPE html>
 <html lang="en" class="has-background-grey-light">
-<%- include('../partials/head.ejs') %>
-  <link rel="stylesheet" type="text/css" href="/bulmaEx/bulma-ribbon/dist/css/bulma-ribbon.min.css">
+  <%- include('../partials/head.ejs') %>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="/bulmaEx/bulma-ribbon/dist/css/bulma-ribbon.min.css"
+  />
 
   <body>
     <!-- Tablet and Up -->
     <%- include('../partials/tablet-up.ejs') %>
-      <!-- END Tablet and Up -->
+    <!-- END Tablet and Up -->
 
-      <!-- Mobile View -->
-      <div class="is-hidden-tablet">
-        <!-- Nav -->
-        <%- include('../partials/nav.ejs') %>
-          <!-- END Nav -->
-          <div class="hero has-background-grey-light is-fullheight has-text-centered">
-            <div class="hero-body p-2">
-              <div class="container">
-                <!-- Brand -->
-                <%- include('../partials/brand.ejs') %>
-                  <!-- END Brand -->
+    <!-- Mobile View -->
+    <div class="is-hidden-tablet">
+      <!-- Nav -->
+      <%- include('../partials/nav.ejs') %>
+      <!-- END Nav -->
+      <div
+        class="hero has-background-grey-light is-fullheight has-text-centered"
+      >
+        <div class="hero-body p-2">
+          <div class="container">
+            <!-- Brand -->
+            <%- include('../partials/brand.ejs') %>
+            <!-- END Brand -->
 
-                  <!-- Box Publikasi -->
-                  <div class="box has-background-grey-lighter m-0 p-2">
-                    <div class="level">
-
-                      <!-- List -->
-                      <% if (forms.length> 0) { %>
-                        <% forms.forEach(el=> { %>
-                          <!-- Ribbon -->
-                          <div class="box p-2 mb-2 has-ribbon is-small <%= el.status == "publish"?"has-background-info-light":"has-background-warning-light" %>" >
-                            <div
-                              class="ribbon is-small is-capitalized <%= el.status == 'publish' ? 'is-success' : 'is-danger' %>">
-                              <%= el.status %>
-                            </div>
-                            <!-- END Ribbon -->
-                            <!-- Tags -->
-                            <% if (el.kode !==false) { %>
-                              <div class="level mb-2 is-mobile">
-                                <div class="level-left">
-                                  <div class="control">
-                                    <div class="tags has-addons">
-                                      <span class="tag is-dark is-capitalized">Kode</span>
-                                      <span class="tag is-info is-light">
-                                        <%= el['kode'] %>
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <% } %>
-                                <!-- END Tags -->
-                                <!-- Kontent -->
-                                <div class="title is-5">
-                                  <%= el.judul %>
-                                </div>
-                                <div class="subtitle is-6 mb-2">
-                                  <%= potongStr(el.deskripsi, 28) %>
-                                </div>
-                                <!-- END Kontent -->
-                                <!-- Form Button -->
-                                <form action="/kreator/publikasi/?id=<%= el.id %>" method="POST">
-                                  <input type="hidden" name="_method" value="PATCH">
-                                  <input type="hidden" name="status" value="<%= el.status %>">
-                                  <button type="submit" class="button is-fullwidth is-info">
-                                    <i class="material-icons-round mr-2">
-                                      save
-                                    </i>
-                                    <span class="is-capitalized">
-                                      Ubah Status
-                                    </span>
-                                  </button>
-                                </form>
-                                <!-- END Form Button -->
-                          </div>
-                          <% }) %>
-                            <% } else { %>
-                              <p class="subtitle is-4">- Tidak ada data -</p>
-                              <% } %>
-                                <!-- END List -->
+            <!-- Box Publikasi -->
+            <div class="box has-background-grey-lighter m-0 p-2">
+              <div class="level">
+                <!-- List -->
+                <% if (forms.length> 0) { %> <% forms.forEach(el=> { %>
+                <!-- Ribbon -->
+                <div class="box p-2 mb-2 has-ribbon is-small <%= el.status ==
+                "publish"?"has-background-info-light":"has-background-warning-light"
+                %>" >
+                <div
+                  class="ribbon is-small is-capitalized <%= el.status == 'publish' ? 'is-success' : 'is-danger' %>"
+                >
+                  <%= el.status %>
+                </div>
+                <!-- END Ribbon -->
+                <!-- Tags -->
+                <% if (el.kode !==false) { %>
+                <div class="level mb-2 is-mobile">
+                  <div class="level-left">
+                    <div class="control">
+                      <div class="tags has-addons">
+                        <span class="tag is-dark is-capitalized">Kode</span>
+                        <span class="tag is-info is-light">
+                          <%= el['kode'] %>
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <!-- END Box Publikasi -->
+                </div>
+                <% } %>
+                <!-- END Tags -->
+                <!-- Kontent -->
+                <div class="title is-5"><%= el.judul %></div>
+                <div class="subtitle is-6 mb-2">
+                  <%= potongStr(el.deskripsi, 28) %>
+                </div>
+                <!-- END Kontent -->
+                <!-- Form Button -->
+                <button
+                  onclick="statusChange(this)"
+                  class="button is-fullwidth is-info"
+                  data-form-id="<%= el._id %>"
+                  data-form-status="<%= el.status %>"
+                  data-form-kode="<%= el.kode %>"
+                >
+                  <i class="material-icons-round mr-2"> save </i>
+                  <span class="is-capitalized"> Ubah Status </span>
+                </button>
+
+                <!-- END Form Button -->
               </div>
+              <% }) %> <% } else { %>
+              <p class="subtitle is-4">- Tidak ada data -</p>
+              <% } %>
+              <!-- END List -->
             </div>
           </div>
+          <!-- END Box Publikasi -->
+          <!-- Back -->
+          <%- include('../partials/back.ejs') %>
+          <!-- END Back -->
+        </div>
       </div>
-      <!-- END Mobile View -->
-      <%- include('../partials/script.ejs') %>
-  </body>
+    </div>
+    <!-- END Mobile View -->
+    <%- include('../partials/script.ejs') %>
+    <script>
+      async function statusChange(data) {
+        let fId = data.getAttribute("data-form-id");
+        let status = data.getAttribute("data-form-status");
+        let kode = data.getAttribute("data-form-kode");
+        let formData = {
+          fId,
+          status,
+          kode,
+        };
 
+        let result = await fetch(`/kreator/publikasi/?id=${fId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }).then((res) => res.json());
+
+        if (result.status === "ok") {
+          alert(result.message);
+          window.location.reload();
+        } else {
+          alert(result.message);
+        }
+      }
+    </script>
+  </body>
 </html>

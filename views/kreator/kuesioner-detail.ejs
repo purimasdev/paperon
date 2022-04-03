@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" class="has-background-grey-light">
   <%- include('../partials/head.ejs') %>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="/bulmaEX/bulma-calendar/dist/css/bulma-calendar.min.css"
+  />
+  <link rel="stylesheet" type="text/css" href="/bulmaRad/css/main.min.css" />
+  <link rel="stylesheet" type="text/css" href="/bulmaCB/css/main.min.css" />
   <body>
     <!-- Tablet and Up -->
     <%- include('../partials/tablet-up.ejs') %>
@@ -20,15 +27,49 @@
             <%- include('../partials/brand.ejs') %>
             <!-- END Brand -->
 
-            <!-- Box Landing -->
-            <div class="box has-background-grey-lighter">
-              <p class="title is-capitalized">mulai menjawab</p>
-              <a href="/responden/cari" class="button is-fullwidth">
-                <i class="material-icons-round mr-2"> search </i>
-                <span class="is-capitalized">cari kuesioner</span>
-              </a>
+            <!-- Info Kuesioner -->
+            <div class="box has-background-grey-lighter mb-2 p-2">
+              <% if (typeof form !== 'undefined' ) { %>
+              <div class="level mb-2 is-mobile">
+                <div class="level-left">
+                  <div class="control">
+                    <div class="tags has-addons">
+                      <span class="tag is-dark is-capitalized">Kode</span>
+                      <span class="tag is-info is-light"> <%= form.kode %> </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p class="title is-5 mb-2">Info Kuesioner</p>
+              <div class="box p-2">
+                <p class="title is-5"><%= form.judul %></p>
+                <p class="subtitle is-6 mb-2"><%= form.deskripsi %></p>
+                <p class="help"><%= form.createdAt %></p>
+              </div>
+              <p class="title is-5 mb-2">Info Kreator</p>
+              <div class="box p-2">
+                <p class="title is-5"><%= form.userId.nama %></p>
+                <p class="subtitle is-6 mb-2"><%= form.userId.email %></p>
+              </div>
+              <% } else { %>
+              <p class="subtitle is-4">- Tidak ada data kuesioner -</p>
+              <% } %>
             </div>
-            <!-- END Box Landing -->
+            <!-- END Info Kuesioner -->
+
+            <!-- Render Pertanyaan -->
+            <div class="box has-background-grey-lighter my-2 p-2">
+              <p class="title is-5">List Pertanyaan</p>
+              <% if (typeof form !== 'undefined') { %>
+              <div>
+                <% form.pertanyaan.forEach(el => { %> <%- ubahPertanyaan(el,
+                'on','split') %> <% }) %>
+              </div>
+              <% } else { %>
+              <p class="subtitle is-4">- Tidak ada data kuesioner -</p>
+              <% } %>
+            </div>
+            <!-- Render Pertanyaan -->
 
             <!-- Back -->
             <%- include('../partials/back.ejs') %>
@@ -39,5 +80,16 @@
     </div>
     <!-- END Mobile View -->
     <%- include('../partials/script.ejs') %>
+    <script src="/bulmaEx/bulma-calendar/dist/js/bulma-calendar.min.js"></script>
+    <script>
+      let today = new Date();
+      // Initialize all input of date type.
+      const calendars = bulmaCalendar.attach('[type="date"]', {
+        type: "date",
+        dateFormat: "DD-MM-YYYY",
+        startDate: today,
+        displayMode: "dialog",
+      });
+    </script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const userSchema = new mongoose.Schema({
+const resultSchema = new mongoose.Schema({
   formId: {
     type: mongoose.Schema.Types.ObjectId, ref: 'form'
   },
@@ -8,11 +8,8 @@ const userSchema = new mongoose.Schema({
     nama: { type: String },
     email: { type: String }
   },
-  jawaban: [{
-    id: { type: mongoose.Schema.Types.ObjectId, ref: 'question' },
-    value: [{type: String}]
-  }]
+  jawab: {}
 
 }, { timestamps: true })
 
-module.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('result', resultSchema)

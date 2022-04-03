@@ -21,7 +21,7 @@
               <%- include('../partials/brand.ejs') %>
               <!-- END Brand -->
               <!-- Login Box -->
-              <div id="loginBox" class="box has-background-grey-lighter">
+              <div id="loginBox" class="box has-background-grey-lighter mb-2">
                 <div class="columns is-mobile">
                   <div class="column"><p class="title">Login</p></div>
                   <% if (setting.enableRegister) { %>
@@ -41,7 +41,6 @@
                           name="email"
                           type="email"
                           placeholder="Email"
-                          value="wiss@wiss.com"
                         />
                         <span class="icon is-small is-left">
                           <i class="material-icons-round">alternate_email</i>
@@ -55,7 +54,6 @@
                           name="password"
                           type="password"
                           placeholder="Password"
-                          value="123456"
                         />
                         <span class="icon is-small is-left">
                           <i class="material-icons-round">account_circle</i>
@@ -81,10 +79,10 @@
               </div>
               <!-- END Login Box -->
               <!-- Register Box -->
-              <% if (setting.enableRegister) { %>
+              <% if (setting.enableRegister === "enable") { %>
               <div
                 id="registerBox"
-                class="box has-background-grey-lighter is-hidden"
+                class="box has-background-grey-lighter is-hidden mb-2"
               >
                 <div class="columns is-mobile">
                   <div class="column"><p class="title">Register</p></div>
@@ -104,7 +102,6 @@
                           name="nama"
                           type="text"
                           placeholder="Nama"
-                          value="dwisada"
                         />
                         <span class="icon is-small is-left">
                           <i class="material-icons-round"> account_circle </i>
@@ -118,7 +115,6 @@
                           name="email"
                           type="email"
                           placeholder="Email"
-                          value="wiss@wiss.com"
                         />
                         <span class="icon is-small is-left">
                           <i class="material-icons-round">alternate_email</i>
@@ -132,7 +128,6 @@
                           name="password"
                           type="password"
                           placeholder="Password"
-                          value="123456"
                         />
                         <span class="icon is-small is-left">
                           <i class="material-icons-round">password</i>
@@ -158,6 +153,9 @@
               </div>
               <% } %>
               <!-- END Register Box -->
+              <!-- Back -->
+              <%- include('../partials/back.ejs') %>
+              <!-- END Back -->
             </div>
           </div>
         </div>
