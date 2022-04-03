@@ -2,23 +2,24 @@ const staticCacheName = 'site-static-v1';
 const dynamicCacheName = 'site-dynamic-v1';
 
 const assets = [
-  '/',
   '/bulma/bulma.css',
-  '/icons/material-icons-round.woff2',
   '/icons/round.css',
-  '/js/install-sw.js',		
-  '/kreator',
+  '/bulmaEX/bulma-calendar/dist/css/bulma-calendar.min.css',
+  '/bulmaEx/bulma-calendar/dist/js/bulma-calendar.min.js',
+  '/bulmaRad/css/main.min.css',
+  '/bulmaCB/css/main.min.css',
+  '/logo/96.png',
   '/logo/192.png',
-  '/logo/96.png',	
-  '/logo/kreator.png',	
- '/manifest.webmanifest',
+  '/icons/material-icons-round.woff2',
+  '/js/install-sw.js',
+  '/manifest.webmanifest',
 ]
 
 // cache size limit fucntion
 const limitCacheSize = (name, size) => {
   caches.open(name).then(cache => {
     cache.keys().then(keys => {
-      if(keys.length > size){
+      if (keys.length > size) {
         cache.delete(keys[0]).then(limitCacheSize(name, size))
       }
     })
@@ -60,7 +61,7 @@ self.addEventListener('fetch', evt => {
           .then(fetchRes => {
             return caches.open(dynamicCacheName).then(cache => {
               cache.put(evt.request.url, fetchRes.clone());
-              limitCacheSize(dynamicCacheName, 30)
+              limitCacheSize(dynamicCacheName, 10)
               return fetchRes;
             })
           });
